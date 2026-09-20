@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracing the Pop — PH Pop Culture 2000-2010</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wall:#F6EFE2;
+    --wall-deep:#ECE0C8;
+    --ink:#2B1E3D;
+    --ink-soft:#6a5f80;
+    --brass:#B9862F;
+    --brass-light:#E8B33D;
+    --pink:#E14C82;
+    --cyan:#1AA6C9;
+    --card:#FFFFFF;
+    --line:rgba(43,30,61,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--wall);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    position:relative;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
+  em{ font-style:italic; font-family:'Fraunces',serif; }
+
+  /* ---------- gallery spotlights ---------- */
+  .spot{ position:fixed; border-radius:50%; pointer-events:none; z-index:0; filter:blur(60px); }
+  .spot1{ width:520px; height:520px; top:-180px; left:-120px; background:radial-gradient(circle, rgba(233,179,61,0.35), transparent 70%); animation:breathe 9s ease-in-out infinite; }
+  .spot2{ width:460px; height:460px; top:20%; right:-160px; background:radial-gradient(circle, rgba(225,76,130,0.22), transparent 70%); animation:breathe 11s ease-in-out infinite 1s; }
+  .spot3{ width:480px; height:480px; bottom:-160px; left:20%; background:radial-gradient(circle, rgba(26,166,201,0.2), transparent 70%); animation:breathe 10s ease-in-out infinite 2s; }
+  @keyframes breathe{ 0%,100%{ opacity:0.6; } 50%{ opacity:1; } }
+
+  /* ---------- entrance curtain ---------- */
+  .curtain{
+    position:fixed; inset:0; z-index:50; pointer-events:none;
+    background:radial-gradient(circle at 50% 40%, var(--brass-light), var(--ink) 140%);
+    animation:curtainOut 1.15s ease forwards;
+  }
+  @keyframes curtainOut{ 0%{ opacity:1; transform:scale(1); } 100%{ opacity:0; transform:scale(1.5); } }
+
+  /* ---------- scroll progress ---------- */
+  .progress-bar{ position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg,var(--brass),var(--pink)); z-index:40; transition:width 0.1s linear; }
+
+  .page{ position:relative; z-index:1; }
+
+  /* ---------- Topbar ---------- */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px clamp(18px,5vw,52px);
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0;
+    background:rgba(246,239,226,0.88);
+    backdrop-filter:blur(10px);
+    z-index:20;
+  }
+  .brand{ font-family:'Fraunces',serif; font-size:1.15rem; font-weight:700; color:var(--ink); }
+  .brand em{ color:var(--pink); }
+  .nav-links{ display:flex; gap:22px; align-items:center; }
+  .nav-links a{
+    font-size:0.84rem; font-weight:500; color:var(--ink-soft); text-decoration:none;
+    padding-bottom:4px; border-bottom:2px solid transparent; transition:color 0.2s ease, border-color 0.2s ease;
+    white-space:nowrap;
+  }
+  .nav-links a:hover, .nav-links a.active{ color:var(--ink); border-color:var(--brass); }
+  .top-right{ display:flex; align-items:center; gap:16px; }
+  .sound-btn{
+    width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--card);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.95rem;
+    transition:transform 0.2s ease, border-color 0.2s ease;
+  }
+  .sound-btn:hover{ border-color:var(--pink); transform:scale(1.08) rotate(-6deg); }
+  .passport{ display:flex; align-items:center; gap:9px; font-size:0.8rem; color:var(--ink-soft); }
+  .ring{ position:relative; width:34px; height:34px; }
+  .ring.pulse{ animation:ringPulse 1s ease 2; }
+  @keyframes ringPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.18); } }
+  .ring svg{ transform:rotate(-90deg); }
+  .ring circle{ fill:none; stroke-width:4; }
+  .ring .track{ stroke:var(--wall-deep); }
+  .ring .fill{ stroke:url(#ringGrad); stroke-linecap:round; transition:stroke-dashoffset 0.6s cubic-bezier(.4,1.4,.4,1); }
+  .ring .count{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:0.58rem; font-weight:700; color:var(--ink); }
+
+  /* ---------- reveal-on-scroll ---------- */
+  .reveal{ opacity:0; transform:translateY(26px); transition:opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  .reveal-stagger > *{ opacity:0; transform:translateY(20px); transition:opacity 0.6s ease, transform 0.6s ease; }
+  .reveal-stagger.in > *{ opacity:1; transform:translateY(0); }
+  .reveal-stagger.in > *:nth-child(1){ transition-delay:0.05s; }
+  .reveal-stagger.in > *:nth-child(2){ transition-delay:0.15s; }
+  .reveal-stagger.in > *:nth-child(3){ transition-delay:0.25s; }
+  .reveal-stagger.in > *:nth-child(4){ transition-delay:0.35s; }
+  .reveal-stagger.in > *:nth-child(5){ transition-delay:0.45s; }
+
+  section{ padding:clamp(56px,9vw,96px) clamp(18px,5vw,52px); max-width:1180px; margin:0 auto; }
+
+  /* ---------- Hero ---------- */
+  .hero{ text-align:left; padding-top:clamp(70px,12vw,120px); max-width:820px; }
+  .hero .eyebrow{
+    display:inline-block; font-size:0.8rem; font-weight:600; color:var(--brass);
+    border:1px solid rgba(185,134,47,0.4); padding:5px 14px; border-radius:100px; margin-bottom:20px;
+  }
+  .hero h1{ font-size:clamp(2.6rem,7vw,4.8rem); line-height:0.98; margin:0 0 18px; }
+  .hero h1 em{ color:var(--pink); }
+  .hero p{ font-size:1.08rem; color:var(--ink-soft); max-width:56ch; margin:0 0 8px; }
+  .hero .scroll-cue{ margin-top:40px; font-size:0.82rem; color:var(--ink-soft); display:flex; align-items:center; gap:8px; }
+  .scroll-cue .arrow{ display:inline-block; animation:bounce 1.6s ease infinite; }
+  @keyframes bounce{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(5px); } }
+
+  /* ---------- Curator's note ---------- */
+  .section-label{ font-size:0.8rem; font-weight:600; color:var(--brass); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; }
+  .section-title{ font-size:clamp(1.6rem,3.5vw,2.1rem); margin:0 0 34px; max-width:44ch; }
+  .note-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:20px; }
+  .note-card{
+    background:var(--card); border:1px solid var(--line); border-radius:4px; padding:26px 24px 24px;
+    position:relative;
+  }
+  .note-card::before{ content:""; position:absolute; top:0; left:0; width:26px; height:26px; border-top:2px solid var(--brass); border-left:2px solid var(--brass); }
+  .note-card::after{ content:""; position:absolute; bottom:0; right:0; width:26px; height:26px; border-bottom:2px solid var(--brass); border-right:2px solid var(--brass); }
+  .note-card h3{ font-size:1.1rem; margin:0 0 10px; color:var(--pink); }
+  .note-card p{ font-size:0.93rem; color:var(--ink-soft); margin:0; }
+
+  /* ---------- Spotlight aspects ---------- */
+  .spotlights{ display:flex; flex-direction:column; gap:44px; }
+  .spot-block{
+    background:var(--card); border:1px solid var(--line); border-radius:10px; padding:clamp(24px,4vw,40px);
+    display:grid; grid-template-columns:120px 1fr; gap:28px; align-items:start;
+  }
+  .spot-icon-wrap{
+    width:96px; height:96px; border-radius:16px; display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  .spot-icon-wrap svg{ width:100%; height:100%; }
+  .spot-block h3{ font-size:1.35rem; margin:0 0 8px; }
+  .spot-blurb{ color:var(--ink-soft); font-size:0.95rem; margin:0 0 22px; max-width:70ch; }
+  .timeline{ display:flex; align-items:center; gap:0; margin-bottom:22px; flex-wrap:wrap; }
+  .tl-node{ display:flex; flex-direction:column; gap:4px; min-width:150px; }
+  .tl-node .tl-tag{ font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; color:var(--brass); }
+  .tl-node .tl-label{ font-size:0.88rem; font-weight:500; color:var(--ink); }
+  .tl-line{ flex:1; min-width:30px; height:2px; background:linear-gradient(90deg, var(--brass), var(--pink)); margin:0 10px; position:relative; top:-8px; }
+  .spot-essay{ font-size:0.94rem; color:var(--ink-soft); max-width:74ch; border-top:1px dashed var(--line); padding-top:18px; }
+
+  /* ---------- Exhibit halls (tabs + grid, from earlier version) ---------- */
+  .rooms-nav{ display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:8px; }
+  .room-tab{
+    display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--line);
+    color:var(--ink-soft); font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:500;
+    padding:10px 16px; border-radius:100px; cursor:pointer; white-space:nowrap;
+    transition:transform 0.25s cubic-bezier(.4,1.6,.4,1), border-color 0.2s ease, color 0.2s ease, background 0.3s ease;
+  }
+  .room-tab svg{ width:16px; height:16px; flex-shrink:0; }
+  .room-tab:hover{ color:var(--ink); border-color:var(--brass); transform:translateY(-2px); }
+  .room-tab.active{
+    color:#fff; background:linear-gradient(100deg,var(--brass),var(--pink)); border-color:transparent;
+    font-weight:600; transform:translateY(-2px) scale(1.04); box-shadow:0 8px 20px -8px rgba(225,76,130,0.5);
+  }
+  .room-tab .tag{ font-size:0.72rem; opacity:0.85; }
+
+  .room-head{ display:flex; align-items:center; gap:14px; margin:26px 0 8px; }
+  .room-icon{ width:42px; height:42px; border-radius:12px; background:var(--card); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; flex-shrink:0; animation:popIn 0.4s cubic-bezier(.4,1.6,.4,1); }
+  @keyframes popIn{ from{ transform:scale(0.5) rotate(-10deg); opacity:0; } to{ transform:scale(1) rotate(0); opacity:1; } }
+  .room-icon svg{ width:20px; height:20px; }
+  .room-head h2{ font-size:1.35rem; margin:0; }
+  .room-intro{ max-width:64ch; color:var(--ink-soft); margin:0 0 24px; font-size:0.93rem; }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:16px; }
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 18px 20px;
+    text-align:left; cursor:pointer; color:var(--ink); font-family:inherit; position:relative;
+    transition:transform 0.2s cubic-bezier(.4,1.4,.4,1), border-color 0.2s ease, box-shadow 0.2s ease;
+    opacity:0; transform:translateY(14px); animation:cardIn 0.5s ease forwards;
+  }
+  @keyframes cardIn{ to{ opacity:1; transform:translateY(0); } }
+  .card:hover{ border-color:var(--brass); transform:translateY(-5px) rotate(-0.3deg); box-shadow:0 16px 30px -18px rgba(43,30,61,0.4); }
+  .card:hover .frame svg{ transform:scale(1.08) rotate(2deg); }
+  .card:focus-visible{ outline:2px solid var(--cyan); outline-offset:2px; }
+  .card .frame{ width:100%; aspect-ratio:16/9; border-radius:9px; margin-bottom:14px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+  .card .frame::after{ content:""; position:absolute; inset:0; background:linear-gradient(135deg, rgba(255,255,255,0.18), transparent 55%); }
+  .card .frame svg{ width:78%; height:78%; transition:transform 0.35s ease; position:relative; z-index:1; }
+  .card .frame.flip svg{ transform:scaleX(-1); }
+  .card:hover .frame.flip svg{ transform:scaleX(-1) scale(1.08) rotate(-2deg); }
+  .card h3{ font-size:1rem; margin:0 0 5px; line-height:1.28; }
+  .card .curator{ font-size:0.76rem; color:var(--ink-soft); }
+  .card .seen-mark{ position:absolute; top:14px; right:14px; width:8px; height:8px; border-radius:50%; background:var(--brass-light); opacity:0; box-shadow:0 0 8px var(--brass-light); }
+  .card.seen .seen-mark{ opacity:1; }
+
+  .takeaway{
+    margin-top:22px; background:linear-gradient(100deg, rgba(185,134,47,0.1), rgba(225,76,130,0.08));
+    border:1px solid rgba(185,134,47,0.35); border-radius:10px; padding:18px 22px; font-size:0.92rem; color:var(--ink);
+  }
+  .takeaway .lbl{ font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--brass); display:block; margin-bottom:6px; }
+
+  /* ---------- Closing ---------- */
+  .closing{ background:var(--ink); color:#F6EFE2; border-radius:16px; padding:clamp(36px,6vw,64px); text-align:center; }
+  .closing .section-label{ color:var(--brass-light); text-align:center; }
+  .closing h2{ font-size:clamp(1.9rem,4.4vw,2.7rem); margin:6px 0 22px; }
+  .closing h2 em{ color:var(--pink); }
+  .closing p{ max-width:70ch; margin:0 auto; color:rgba(246,239,226,0.82); font-size:1rem; }
+  .closing .credit{ margin-top:26px; font-size:0.85rem; color:rgba(246,239,226,0.55); }
+  .marquee{ overflow:hidden; white-space:nowrap; margin-top:32px; border-top:1px solid rgba(246,239,226,0.18); border-bottom:1px solid rgba(246,239,226,0.18); padding:10px 0; }
+  .marquee-track{ display:inline-block; animation:marquee 22s linear infinite; font-family:'Fraunces',serif; font-size:0.85rem; font-weight:600; letter-spacing:0.5px; color:var(--brass-light); }
+  .marquee-track span{ color:var(--pink); margin:0 10px; }
+  @keyframes marquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+  .complete-banner{ max-width:64ch; margin:20px auto 0; background:rgba(232,179,61,0.14); border:1px solid var(--brass-light); border-radius:10px; padding:14px 18px; font-size:0.88rem; display:none; color:#F6EFE2; }
+  .complete-banner.show{ display:block; }
+  .complete-banner strong{ color:var(--brass-light); }
+
+  footer{ padding:24px clamp(18px,5vw,52px) 40px; font-size:0.78rem; color:var(--ink-soft); text-align:center; }
+
+  /* ---------- Modal ---------- */
+  .backdrop{ position:fixed; inset:0; background:rgba(20,12,32,0); display:none; align-items:center; justify-content:center; padding:20px; z-index:30; transition:background 0.25s ease; }
+  .backdrop.open{ display:flex; background:rgba(20,12,32,0.72); }
+  .modal{
+    background:var(--card); color:var(--ink); max-width:480px; width:100%; border-radius:16px; padding:0 0 26px;
+    position:relative; overflow:hidden; max-height:88vh; overflow-y:auto;
+    transform:scale(0.9) translateY(10px); opacity:0; transition:transform 0.3s cubic-bezier(.34,1.56,.64,1), opacity 0.25s ease;
+  }
+  .backdrop.open .modal{ transform:scale(1) translateY(0); opacity:1; }
+  .modal .frame-lg{ width:100%; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; position:relative; }
+  .modal .frame-lg svg{ width:56%; }
+  .modal .body-pad{ padding:22px 26px 0; }
+  .modal .plaque-label{ font-size:0.74rem; color:var(--pink); margin-bottom:6px; font-weight:600; }
+  .modal h2{ font-size:1.32rem; margin:0 0 12px; }
+  .modal p{ font-size:0.93rem; color:#463a5c; margin:0 0 14px; }
+  .modal .meta{ display:flex; justify-content:space-between; align-items:center; font-size:0.78rem; color:#8a7f9c; border-top:1px solid #eee4ee; padding-top:13px; margin-top:6px; }
+  .modal .close{ position:absolute; top:14px; right:14px; width:32px; height:32px; border-radius:50%; background:rgba(43,30,61,0.55); border:none; font-size:1rem; color:#fff; cursor:pointer; line-height:1; z-index:2; transition:transform 0.2s ease, background 0.2s ease; }
+  .modal .close:hover{ background:rgba(43,30,61,0.85); transform:rotate(90deg); }
+
+  .confetti-piece{ position:fixed; top:-20px; width:9px; height:14px; z-index:35; pointer-events:none; animation:confettiFall linear forwards; }
+  @keyframes confettiFall{ to{ transform:translateY(105vh) rotate(540deg); opacity:0.9; } }
+
+  @media (max-width:760px){
+    .spot-block{ grid-template-columns:1fr; }
+    .spot-icon-wrap{ width:64px; height:64px; }
+    .nav-links{ display:none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal, .reveal-stagger > *{ opacity:1 !important; transform:none !important; transition:none !important; }
+    .curtain, .card, .spot, .marquee-track{ animation:none !important; opacity:0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="curtain"></div>
+<div class="progress-bar" id="progressBar"></div>
+<div class="spot spot1"></div>
+<div class="spot spot2"></div>
+<div class="spot spot3"></div>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8B33D"/><stop offset="100%" stop-color="#E14C82"/>
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8B33D"/><stop offset="100%" stop-color="#E14C82"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="page">
+
+<div class="topbar">
+  <div class="brand">Tracing the <em>Pop</em></div>
+  <div class="nav-links" id="navLinks">
+    <a href="#entrance">Entrance</a>
+    <a href="#note">Curator's Note</a>
+    <a href="#spotlight">In Focus</a>
+    <a href="#halls">Exhibit Halls</a>
+    <a href="#closing">Closing Room</a>
+  </div>
+  <div class="top-right">
+    <div class="passport">
+      <span id="passportText">0 / 35</span>
+      <div class="ring" id="ringWrap">
+        <svg width="34" height="34"><circle class="track" cx="17" cy="17" r="14"></circle><circle class="fill" id="ringFill" cx="17" cy="17" r="14" stroke-dasharray="88" stroke-dashoffset="88"></circle></svg>
+        <div class="count" id="ringCount">0</div>
+      </div>
+    </div>
+    <button class="sound-btn" id="soundBtn" title="Toggle sound" aria-label="Toggle sound">🔈</button>
+  </div>
+</div>
+
+<section class="hero" id="entrance">
+  <span class="eyebrow">A Review of a Decade in PH Popular Culture</span>
+  <h1>2000&ndash;2010: The <em>Digital Dawn</em> Era</h1>
+  <p>Text capital of the world. Teleserye primetime. Friendster top 8. Walk through the group's full research — purpose, patterns, and every exhibit — built into one digital museum.</p>
+  <p class="scroll-cue"><span class="arrow">&darr;</span> Scroll to step inside</p>
+</section>
+
+<section id="note">
+  <div class="reveal">
+    <div class="section-label">Curator's Note</div>
+    <h2 class="section-title">Why this museum exists, and who it's for</h2>
+  </div>
+  <div class="note-grid reveal-stagger" id="noteGrid"></div>
+</section>
+
+<section id="spotlight">
+  <div class="reveal">
+    <div class="section-label">In Focus</div>
+    <h2 class="section-title">Three aspects the group chose to spotlight</h2>
+  </div>
+  <div class="spotlights" id="spotlightGrid"></div>
+</section>
+
+<section id="halls">
+  <div class="reveal">
+    <div class="section-label">The Exhibit Halls</div>
+    <h2 class="section-title">All seven aspects, five curators each</h2>
+  </div>
+  <nav class="rooms-nav" id="roomsNav"></nav>
+  <div class="room-head">
+    <div class="room-icon" id="roomIconWrap"></div>
+    <h2 id="roomTitle"></h2>
+  </div>
+  <p class="room-intro" id="roomIntro"></p>
+  <div class="grid" id="grid"></div>
+  <div class="takeaway" id="takeawayCard"><span class="lbl">Curator's Takeaway</span><span id="takeawayText"></span></div>
+</section>
+
+<section id="closing">
+  <div class="closing reveal">
+    <div class="section-label">Closing Room</div>
+    <h2>The <em>Digital Dawn</em> Era</h2>
+    <p id="closingText"></p>
+    <div class="complete-banner" id="completeBanner"><strong>Full collection unlocked.</strong> You've walked through every exhibit in the gallery — nice work.</div>
+    <div class="marquee"><div class="marquee-track" id="marqueeTrack"></div></div>
+    <p class="credit">Curated by Kaye, Yza, Kirsten, William, and Mendoza — MO-HUM080, Milestone 1</p>
+  </div>
+</section>
+
+<footer>Illustrations are original vector art since real photos/clips can't be embedded here — swap in your own photos before presenting if you'd like.</footer>
+
+</div>
+
+<div class="backdrop" id="backdrop">
+  <div class="modal">
+    <button class="close" id="closeModal">&times;</button>
+    <div class="frame-lg" id="modalFrame"></div>
+    <div class="body-pad">
+      <div class="plaque-label" id="modalRoom"></div>
+      <h2 id="modalTitle"></h2>
+      <p id="modalBody"></p>
+      <div class="meta"><span id="modalCurator"></span><span id="modalSource"></span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= icon + illustration libraries ================= */
+const icons = {
+  heart: `<svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-9.8-9C.6 7.7 2.4 4 6 4c2 0 3.4 1.1 4 2.3C10.6 5.1 12 4 14 4c3.6 0 5.4 3.7 3.8 7.5-2.3 4.4-9.8 9-9.8 9z"/></svg>`,
+  eye: `<svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  mic: `<svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>`,
+  pin: `<svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>`,
+  clock: `<svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>`,
+  phone: `<svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><line x1="11" y1="18" x2="13" y2="18"/></svg>`,
+  globe: `<svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 2.5 4.2 5.7 4.2 9s-1.4 6.5-4.2 9c-2.8-2.5-4.2-5.7-4.2-9S9.2 5.5 12 3z"/></svg>`
+};
+
+const illustrations = {
+  heart: `<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="38" y="52" width="124" height="46" rx="10" fill="#ffffff" fill-opacity="0.92"/>
+    <circle cx="66" cy="75" r="17" fill="none" stroke="#241143" stroke-width="4"/>
+    <circle cx="134" cy="75" r="17" fill="none" stroke="#241143" stroke-width="4"/>
+    <rect x="92" y="60" width="16" height="8" rx="2" fill="#241143" fill-opacity="0.55"/>
+    <line x1="100" y1="52" x2="100" y2="38" stroke="#ffffff" stroke-width="3"/>
+    <circle cx="100" cy="35" r="4" fill="#ffffff"/>
+    <path d="M132 30c-6-8-18-6-18 3 0 7 10 13 18 18 8-5 18-11 18-18 0-9-12-11-18-3z" fill="#FFD23F"/>
+    <path d="M40 40c4-4 4-10 0-14M46 34c4-4 4-10 0-14" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>`,
+  eye: `<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="100" cy="72" rx="46" ry="58" fill="none" stroke="#ffffff" stroke-width="5"/>
+    <ellipse cx="100" cy="72" rx="46" ry="58" fill="#ffffff" fill-opacity="0.12"/>
+    <rect x="92" y="122" width="16" height="14" rx="3" fill="#ffffff" fill-opacity="0.85"/>
+    <rect x="76" y="134" width="48" height="6" rx="3" fill="#ffffff" fill-opacity="0.85"/>
+    <path d="M74 60c8-10 44-10 52 0" stroke="#241143" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="100" cy="78" r="10" fill="#241143"/>
+    <circle cx="104" cy="74" r="3" fill="#ffffff"/>
+    <path d="M150 34l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#FFD23F"/>
+    <path d="M44 100l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#FFD23F" fill-opacity="0.8"/>
+  </svg>`,
+  mic: `<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+    <path d="M100 6l58 100H42z" fill="#ffffff" fill-opacity="0.14"/>
+    <rect x="86" y="30" width="28" height="46" rx="14" fill="#ffffff"/>
+    <path d="M68 62a32 32 0 0 0 64 0" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <line x1="100" y1="94" x2="100" y2="114" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+    <line x1="78" y1="118" x2="122" y2="118" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="40" cy="40" r="4" fill="#FFD23F"/>
+    <circle cx="160" cy="50" r="5" fill="#FFD23F"/>
+    <circle cx="150" cy="100" r="3" fill="#ffffff"/>
+  </svg>`,
+  pin: `<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="26" y="70" width="34" height="52" fill="#ffffff" fill-opacity="0.9"/>
+    <rect x="66" y="46" width="34" height="76" fill="#ffffff"/>
+    <rect x="106" y="60" width="34" height="62" fill="#ffffff" fill-opacity="0.9"/>
+    <rect x="34" y="80" width="8" height="8" fill="#241143" fill-opacity="0.5"/>
+    <rect x="46" y="80" width="8" height="8" fill="#241143" fill-opacity="0.5"/>
+    <rect x="74" y="56" width="8" height="8" fill="#241143" fill-opacity="0.5"/>
+    <rect x="86" y="56" width="8" height="8" fill="#241143" fill-opacity="0.5"/>
+    <rect x="74" y="74" width="8" height="8" fill="#241143" fill-opacity="0.5"/>
+    <rect x="86" y="74" width="8" height="8" fill="#241143" fill-opacity="0.5"/>
+    <rect x="114" y="70" width="8" height="8" fill="#241143" fill-opacity="0.5"/>
+    <rect x="126" y="70" width="8" height="8" fill="#241143" fill-opacity="0.5"/>
+    <path d="M150 30c-10 0-18 8-18 18 0 13 18 30 18 30s18-17 18-30c0-10-8-18-18-18z" fill="#FFD23F"/>
+    <circle cx="150" cy="48" r="6" fill="#241143"/>
+  </svg>`,
+  clock: `<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="46" y="28" width="108" height="72" rx="10" fill="#ffffff" fill-opacity="0.92"/>
+    <rect x="58" y="40" width="84" height="48" rx="4" fill="#241143"/>
+    <circle cx="100" cy="64" r="18" fill="none" stroke="#FFD23F" stroke-width="3"/>
+    <line x1="100" y1="64" x2="100" y2="53" stroke="#FFD23F" stroke-width="3" stroke-linecap="round"/>
+    <line x1="100" y1="64" x2="108" y2="68" stroke="#FFD23F" stroke-width="3" stroke-linecap="round"/>
+    <path d="M60 28l14-14M140 28l-14-14" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+    <rect x="86" y="100" width="28" height="10" rx="3" fill="#ffffff" fill-opacity="0.8"/>
+    <rect x="70" y="110" width="60" height="8" rx="4" fill="#ffffff" fill-opacity="0.6"/>
+  </svg>`,
+  phone: `<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="66" y="18" width="52" height="96" rx="12" fill="#ffffff"/>
+    <rect x="74" y="30" width="36" height="24" rx="3" fill="#241143"/>
+    <circle cx="92" cy="90" r="9" fill="#241143" fill-opacity="0.5"/>
+    <rect x="120" y="34" width="58" height="40" rx="12" fill="#FFD23F"/>
+    <circle cx="134" cy="54" r="4" fill="#241143"/>
+    <circle cx="148" cy="54" r="4" fill="#241143"/>
+    <circle cx="162" cy="54" r="4" fill="#241143"/>
+    <path d="M126 74l-8 12 14-6z" fill="#FFD23F"/>
+  </svg>`,
+  globe: `<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="68" r="46" fill="none" stroke="#ffffff" stroke-width="4"/>
+    <ellipse cx="100" cy="68" rx="20" ry="46" fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.7"/>
+    <line x1="54" y1="68" x2="146" y2="68" stroke="#ffffff" stroke-width="3" stroke-opacity="0.7"/>
+    <line x1="60" y1="46" x2="140" y2="46" stroke="#ffffff" stroke-width="2" stroke-opacity="0.5"/>
+    <line x1="60" y1="90" x2="140" y2="90" stroke="#ffffff" stroke-width="2" stroke-opacity="0.5"/>
+    <path d="M150 40a58 58 0 0 1 0 56" stroke="#FFD23F" stroke-width="3" fill="none" stroke-linecap="round" stroke-opacity="0.9"/>
+    <path d="M160 30a76 76 0 0 1 0 76" stroke="#FFD23F" stroke-width="3" fill="none" stroke-linecap="round" stroke-opacity="0.5"/>
+  </svg>`
+};
+function frameBg(seed){
+  const g = ['linear-gradient(135deg,#E14C82,#7A2BFF)','linear-gradient(135deg,#1AA6C9,#7A2BFF)','linear-gradient(135deg,#E8B33D,#E14C82)','linear-gradient(135deg,#1AA6C9,#E8B33D)','linear-gradient(135deg,#B9862F,#E14C82)'];
+  return g[seed % g.length];
+}
+
+/* ================= curator's note ================= */
+const note = [
+  { title:"Purpose", body:"The purpose of our digital museum is to examine and document the development of Philippine popular culture from 2000 to 2010. It aims to demonstrate how technological advancement, mass media, globalization, and changing social practices influenced the way Filipinos communicated, entertained themselves, expressed their identities, and interacted with others." },
+  { title:"Audience", body:"The main audience is Filipino students and young people who were not alive during 2000-2010, alongside older Filipinos who lived through the period and can recognize themselves in the exhibits. Scholars, researchers, and teachers interested in Philippine media and popular culture are also welcome." },
+  { title:"Context", body:"This museum was built within the context of the rapid cultural and technological change the Philippines experienced in the 2000s — the explosion of cellphones and text messaging, the internet and social networks, and the continued dominance of television, music, cinema, and fashion." }
+];
+document.getElementById('noteGrid').innerHTML = note.map(n=>`<div class="note-card"><h3>${n.title}</h3><p>${n.body}</p></div>`).join('');
+
+/* ================= spotlight (3 focus aspects) ================= */
+const spotlights = [
+  {
+    icon:"phone", title:"Technology",
+    blurb:"How mobile phones, text messaging, the internet, and emerging digital platforms transformed communication, entertainment, and cultural participation among Filipinos.",
+    timeline:[["Before 2000","Landlines & letters"],["2000s","Texting & internet cafés"],["After 2010","Smartphones & home WiFi"]],
+    essay:"A common pattern in 2000-2010 was the rise of mobile technology and the internet in daily Filipino life. Text messaging, or \u201Ctexting,\u201D became the main way to communicate because of affordable \u201Cunli-text\u201D promos from Globe and Smart. Internet cafés or \u201Ccomshops\u201D were the main spaces for playing games like Ragnarok and accessing Friendster and Multiply. This pattern of using technology for communication holds across decades: before 2000, Filipinos used landlines and letters; after 2010, the same need to connect shifted to smartphones, Facebook, and mobile data — from SMS and comshops to apps and home WiFi."
+  },
+  {
+    icon:"heart", title:"Affect, Senses, and Feelings",
+    blurb:"How music, teleseryes, food, fashion, and performances reflected and shaped people's emotions, memories, and everyday experiences.",
+    timeline:[["Before 2000","Movies & radio dramas"],["2000s","Shared teleserye primetime"],["After 2010","YouTube, K-drama & TikTok"]],
+    essay:"TV and music created shared emotional experiences. Teleseryes like \u201CPangako Sa'Yo,\u201D \u201CMarimar,\u201D and \u201CSana Maulit Muli,\u201D and reality shows like \u201CPinoy Big Brother,\u201D made people feel \u201Ckilig,\u201D \u201Cawa,\u201D and \u201Cgigil\u201D together. Music from bands like Parokya ni Edgar and Eraserheads became the soundtrack of memories. This pattern of media shaping emotion holds across decades too — before 2000 it was movies and radio dramas, after 2010 it moved to YouTube vlogs, K-dramas on Netflix, and viral TikTok sounds. The difference is that in the 2000s, people felt these emotions together at the same TV time, while today it's personal and on-demand."
+  },
+  {
+    icon:"eye", title:"Body and Self-Image",
+    blurb:"How Philippine popular culture was strongly influenced by television, movies, magazines, advertisements, beauty pageants, and celebrities.",
+    timeline:[["Before 2000","Movie stars & VHS"],["2000s","TV, magazines & pageants"],["After 2010","Instagram & K-pop idols"]],
+    essay:"Pop culture set trends for beauty and style. In the 2000s, celebrities on TV and in magazines promoted tanned or mestiza looks, rebonded hair, and branded clothes from malls like SM and Bench. Music videos and beauty pageants also influenced how teens dressed and acted. This pattern of media affecting self-image holds across decades: before 2000 it was movie stars and VHS tapes, after 2010 it shifted to Instagram models and K-pop idols. The difference in the 2000s is that trends spread slower through TV and magazines, not instantly like on TikTok today."
+  }
+];
+document.getElementById('spotlightGrid').innerHTML = spotlights.map(s=>`
+  <div class="spot-block reveal">
+    <div class="spot-icon-wrap" style="background:${frameBg(spotlights.indexOf(s))}">${illustrations[s.icon]}</div>
+    <div>
+      <h3>${s.title}</h3>
+      <p class="spot-blurb">${s.blurb}</p>
+      <div class="timeline">
+        ${s.timeline.map((t,i)=>`<div class="tl-node"><span class="tl-tag">${t[0]}</span><span class="tl-label">${t[1]}</span></div>${i<2?'<div class="tl-line"></div>':''}`).join('')}
+      </div>
+      <p class="spot-essay">${s.essay}</p>
+    </div>
+  </div>
+`).join('');
+
+/* ================= exhibit hall data (7 rooms x 5 curators) ================= */
+const rooms = [
+  { id:"affect", name:"Affect & Feelings", icon:"heart",
+    intro:"How the decade felt — the music in the background and the emotions on tap.",
+    conclusion:"This period was a period of cultural experiences that shaped people's affects, senses, and feelings. Music, TV, arcade gaming, telephone usage, and fashion were all part of everyday life and brought people together, creating joy, excitement, togetherness, nostalgia, and connection.",
+    items:[
+      { curator:"Kaye", title:"The Soundtrack Everywhere", body:"Filipinos frequently listened to CDs, cassette tapes, FM radio, and later MP3 players. In homes, cars, shops, and public spaces, OPM, pop music, and international music were frequently heard.", source:"Shoop, 2017" },
+      { curator:"Yza", title:"Kilig, Gigil, and the Bashing Culture", body:"This decade sparked intense emotions through reality TV and teleserye. Shows like Pinoy Big Brother and Pangako Sa'Yo created \u201Ckilig,\u201D \u201Cgigil,\u201D and \u201Cbashing\u201D culture. Viewers felt personally connected by voting through SMS and discussing episodes in school and online.", source:"Tiongson, 2013" },
+      { curator:"Kirsten", title:"\u201CMeteor Garden\u201D Fever", body:"\u201CMeteor Garden\u201D fever in the Philippines made many young Filipinos feel excited and emotionally attached to the series and its characters." },
+      { curator:"William", title:"Text Capital of the World", body:"Text messaging culture created constant emotional connectivity. The Philippines was dubbed the \u201CText Capital of the World,\u201D fostering an always-on intimacy among family and friends." },
+      { curator:"Mendoza", title:"The Blue Magic Run", body:"Filipinos went to Blue Magic as a go-to shop for romantic gifts." }
+    ]
+  },
+  { id:"body", name:"Body & Self-Image", icon:"eye",
+    intro:"What the decade told young Filipinos they should look like — and where they shopped to get there.",
+    conclusion:"Body image in the decade remained anchored to Western/mestiza beauty ideals, commercialized and intensified through the booming whitening-product and fitness industries.",
+    items:[
+      { curator:"Kaye", title:"Comparing Yourself to the Screen", body:"Television and advertisements could make people compare their appearance with celebrities and popular images." },
+      { curator:"Yza", title:"The Fair-Skin, Slim-Body Ideal", body:"Television and magazine ads promoted the \u201Cfair skin\u201D and slim body ideal. Korean dramas and local celebrities influenced how young people dressed and viewed beauty, making appearance a big topic in schools and media." },
+      { curator:"Kirsten", title:"Low-Rise Jeans and New Hairstyles", body:"Low-rise jeans, colorful clothes, and changing hairstyles influenced how Filipino teenagers expressed their appearance and identity." },
+      { curator:"William", title:"The Early Aerobics Boom", body:"Gym culture and fitness videos gained traction with the spread of cable TV programming and the early-2000s aerobics trend." },
+      { curator:"Mendoza", title:"Bench, Penshoppe, and Folded & Hung", body:"The decade showed homegrown fashion brands such as Bench, Penshoppe, and Folded and Hung become household names." }
+    ]
+  },
+  { id:"performance", name:"Performance", icon:"mic",
+    intro:"From primetime drama to the OPM bar scene — how pop culture was staged and performed.",
+    conclusion:"Performance shifted from purely staged forms (teleserye, concerts) toward participatory, amateur spectacle (reality TV, noontime games), democratizing the path to becoming a star.",
+    items:[
+      { curator:"Kaye", title:"Mass Media Takes the Stage", body:"The decade saw a rise in mass media influence, with television, radio, and film becoming dominant platforms for popular culture. The purpose was to entertain, inform, and reflect the social realities of Filipinos." },
+      { curator:"Yza", title:"Reality Formats and Overnight Stars", body:"Performance shifted to \u201Creality\u201D formats. Talent and survival shows like Star in a Million and Pinoy Dream Academy made it possible for ordinary Filipinos to become stars overnight. The focus was on raw talent and audience votes." },
+      { curator:"Kirsten", title:"Eat Bulaga, Wowowee, and ASAP", body:"Variety shows like Eat Bulaga!, Wowowee, and ASAP made singing and dancing common forms of entertainment." },
+      { curator:"William", title:"The OPM Band Resurgence", body:"The OPM band scene resurged with acts like Rivermaya, Parokya ni Edgar, and Kamikazee performing in bars and gigs, alongside an emerging \u201Cindie\u201D performance culture." },
+      { curator:"Mendoza", title:"Dance Crazes in the Classroom", body:"The Philippines got hooked with dance crazes and jingle songs which students used in school performances." }
+    ]
+  },
+  { id:"space", name:"Space", icon:"pin",
+    intro:"Where pop culture actually happened — malls, internet cafés, and the streets in between.",
+    conclusion:"The 2000s marked a significant transformation of cultural spaces, as urban centers, media platforms, and public venues became important sites for cultural production, social interaction, and identity formation.",
+    items:[
+      { curator:"Kaye", title:"Metro Manila as Cultural Hub", body:"Urban centers like Metro Manila became cultural hubs with malls, cinemas, concert venues, and TV studios serving as key sites for popular culture activities. Public spaces such as plazas and streets also hosted festivals and performances." },
+      { curator:"Yza", title:"SM, Glorietta, and the Internet Café", body:"Malls became the main social spaces for youth. Places like SM and Glorietta hosted concerts, album launches, and fan meet-ups. Internet cafés also served as key spaces for gaming, chatting, and accessing Friendster." },
+      { curator:"Kirsten", title:"The Family Videoke Setup", body:"Videoke bars and family videoke setups became popular social spaces where Filipinos gathered to sing and spend time together." },
+      { curator:"William", title:"DOTA, Counter-Strike, and Friendster Nights", body:"Internet cafés proliferated as new communal-digital spaces for youth, used for online gaming (DOTA, Counter-Strike) and early social networking (Friendster)." },
+      { curator:"Mendoza", title:"The Milo Truck at the School Gate", body:"The Milo truck visited schools, and children lined up for a free cup of cold Milo drink." }
+    ]
+  },
+  { id:"time", name:"Time", icon:"clock",
+    intro:"How the decade scheduled itself — from primetime blocks to a boxing match that emptied the streets.",
+    conclusion:"The decade reflected the country's transition toward modernization and globalization, characterized by significant political, economic, technological, and cultural transformation that influenced everyday lifestyles.",
+    items:[
+      { curator:"Kaye", title:"Globalization on a Timeline", body:"The country experienced economic challenges and gradual globalization, influencing consumer behavior and cultural production.", source:"Toral, 2003" },
+      { curator:"Yza", title:"Prime Time and Unli-Text Hours", body:"Daily routines followed media schedules. After-school hours were for anime and teen shows, 6\u20139pm was \u201Cprime time\u201D for teleseryes, and late nights were peak hours for \u201Cunli-text\u201D promotions." },
+      { curator:"Kirsten", title:"The Ber Months Begin", body:"The \u201Cber months\u201D Christmas season became associated with starting Christmas celebrations as early as September, including Christmas music and decorations." },
+      { curator:"William", title:"Teleserye Structured the Household", body:"Teleserye scheduling structured domestic daily routines around fixed primetime blocks, organizing family time around the television." },
+      { curator:"Mendoza", title:"The Pacquiao Fight Effect", body:"Manny Pacquiao's fight time is known to result in no traffic in EDSA and zero crime rate." }
+    ]
+  },
+  { id:"technology", name:"Technology", icon:"phone",
+    intro:"The gadgets, piracy, and platforms that carried pop culture from one household to the next.",
+    conclusion:"Technological development from 2000-2010 reflected the country's increasing integration into the global economy and emerging information society, though electronics exports remained largely dependent on assembly and testing with limited domestic value added.",
+    items:[
+      { curator:"Kaye", title:"SMS as a Political Tool", body:"SMS became a dominant communication technology and was used for both personal and political mobilization.", source:"Toral, 2003" },
+      { curator:"Yza", title:"Jejemon, Bluetooth, and Friendster", body:"Mobile phones became personal devices. Texting in \u201Cjejemon\u201D language and sending ringtones/MP3s via Bluetooth were common. Friendster and Multiply were the main social media platforms for self-expression." },
+      { curator:"Kirsten", title:"Nokia, Texting, and Friendster", body:"Nokia phones, text messaging, and Friendster changed how Filipino teenagers communicated and interacted with others." },
+      { curator:"William", title:"The VCD and DVD Piracy Economy", body:"VCD/DVD piracy and early file-sharing shaped everyday access to global music and film for most Filipino households." },
+      { curator:"Mendoza", title:"CD-R King and the Lovebug Virus", body:"CD-R King, known for selling affordable computer accessories, expanded its branches. Meanwhile, the infamous Lovebug virus, developed by a Filipino student, infected millions of Windows computers." }
+    ]
+  },
+  { id:"globalization", name:"Globalization", icon:"globe",
+    intro:"How the Philippines exported and imported culture — remittances, K-dramas, and a viral YouTube clip.",
+    conclusion:"Globalization in the Philippines was a mixed process: it expanded trade, migration, and modern services, and local culture absorbed global media bidirectionally — but it also increased vulnerability and left major social inequalities unresolved.",
+    items:[
+      { curator:"Kaye", title:"Remittances and New Labor Flows", body:"Overseas work became part of the globalization model, bringing remittances and new flows of labor, but also creating policy dilemmas around protection and reintegration." },
+      { curator:"Yza", title:"The Korean Wave Arrives", body:"The Korean Wave entered the Philippines through dramas and music. American reality TV formats were also adopted locally, showing how global trends were mixed with Filipino culture." },
+      { curator:"Kirsten", title:"The K-Pop and Anime Wave", body:"K-pop, anime, and other East Asian media became increasingly popular among Filipino youth." },
+      { curator:"William", title:"Charice's Viral Breakthrough", body:"Filipino performers gained international recognition, most notably Charice Pempengco's 2007 viral YouTube fame, showing new global routes to stardom." },
+      { curator:"Mendoza", title:"A Virus That Went Global", body:"The infamous Lovebug virus, developed by a Filipino student, had infected millions of Windows computers worldwide." }
+    ]
+  }
+];
+
+let activeRoom = rooms[0].id;
+const seen = new Set();
+const totalItems = rooms.reduce((n,r)=>n+r.items.length,0);
+document.getElementById('passportText').textContent = `0 / ${totalItems}`;
+const RADIUS = 14, CIRC = 2*Math.PI*RADIUS;
+
+const nav = document.getElementById('roomsNav');
+const grid = document.getElementById('grid');
+const roomIntro = document.getElementById('roomIntro');
+const roomTitle = document.getElementById('roomTitle');
+const roomIconWrap = document.getElementById('roomIconWrap');
+const takeawayText = document.getElementById('takeawayText');
+const backdrop = document.getElementById('backdrop');
+const ringFill = document.getElementById('ringFill');
+const ringCount = document.getElementById('ringCount');
+const ringWrap = document.getElementById('ringWrap');
+const passportText = document.getElementById('passportText');
+const completeBanner = document.getElementById('completeBanner');
+ringFill.setAttribute('stroke-dasharray', CIRC.toFixed(1));
+
+document.getElementById('closingText').textContent = "The popular culture of the Philippines from 2000 to 2010 can be characterized as the \u201CDigital Dawn Era.\u201D This was the decade when technology like mobile phones, SMS, and internet cafés became part of daily Filipino life. It was also the decade when television shows and music created strong shared emotions \u2014 \u201Ckilig,\u201D \u201Cawa,\u201D and \u201Cgigil\u201D \u2014 that connected people nationwide. At the same time, celebrities and media began to heavily influence beauty standards and fashion, from rebonded hair to mall brands. Many patterns that started in the 2000s \u2014 texting culture, reality TV participation, and media-driven self-image \u2014 are still present today but have evolved with social media and smartphones. The 2000-2010 period served as the bridge between analog culture and the digital, interactive culture we have now.";
+
+const marqueeWords = ["KILIG","JEJEMON","FRIENDSTER TOP 8","UNLI-TEXT","TELESERYE PRIME TIME","THE BER MONTHS","DIGITAL DAWN ERA","METEOR GARDEN FEVER","OPM INDIE"];
+document.getElementById('marqueeTrack').innerHTML = (marqueeWords.concat(marqueeWords)).map(w=>`${w}<span>&bull;</span>`).join(' ');
+
+function keyOf(room,item){ return room.id + '::' + item.title; }
+
+function renderNav(){
+  nav.innerHTML = '';
+  rooms.forEach(r=>{
+    const btn = document.createElement('button');
+    btn.className = 'room-tab' + (r.id===activeRoom ? ' active' : '');
+    const seenInRoom = r.items.filter(it=>seen.has(keyOf(r,it))).length;
+    btn.innerHTML = icons[r.icon] + `<span>${r.name}</span>` + (seenInRoom ? `<span class="tag">${seenInRoom}/${r.items.length}</span>` : '');
+    btn.onclick = ()=>{ activeRoom = r.id; playTone('click'); render(); };
+    nav.appendChild(btn);
+  });
+}
+function renderGrid(){
+  const room = rooms.find(r=>r.id===activeRoom);
+  roomTitle.textContent = room.name;
+  roomIconWrap.innerHTML = icons[room.icon];
+  roomIconWrap.style.animation = 'none'; void roomIconWrap.offsetWidth; roomIconWrap.style.animation = '';
+  roomIntro.textContent = room.intro;
+  takeawayText.textContent = room.conclusion;
+  grid.innerHTML = '';
+  room.items.forEach((item,i)=>{
+    const k = keyOf(room,item);
+    const card = document.createElement('button');
+    card.className = 'card' + (seen.has(k) ? ' seen' : '');
+    card.style.animationDelay = (i*70) + 'ms';
+    const flipClass = (i % 2 === 1) ? ' flip' : '';
+    card.innerHTML = `<span class="seen-mark"></span><div class="frame${flipClass}" style="background:${frameBg(i)}">${illustrations[room.icon]}</div><h3>${item.title}</h3><div class="curator">Curated by ${item.curator}${seen.has(k) ? ' \u2014 viewed' : ''}</div>`;
+    card.onclick = ()=> openModal(room, item, i);
+    grid.appendChild(card);
+  });
+}
+function renderPassport(){
+  const n = seen.size;
+  passportText.textContent = `${n} / ${totalItems}`;
+  ringCount.textContent = n;
+  ringFill.setAttribute('stroke-dashoffset', (CIRC*(1-n/totalItems)).toFixed(1));
+  const justCompleted = n===totalItems && !completeBanner.classList.contains('show');
+  completeBanner.classList.toggle('show', n===totalItems);
+  if(justCompleted){ ringWrap.classList.add('pulse'); launchConfetti(); playTone('discover'); }
+}
+function render(){ renderNav(); renderGrid(); renderPassport(); }
+
+function openModal(room, item, i){
+  const k = keyOf(room,item);
+  const isNew = !seen.has(k);
+  seen.add(k);
+  const flipClass = (i % 2 === 1) ? ' flip' : '';
+  document.getElementById('modalFrame').style.background = frameBg(i);
+  document.getElementById('modalFrame').className = 'frame-lg' + flipClass;
+  document.getElementById('modalFrame').innerHTML = illustrations[room.icon];
+  document.getElementById('modalRoom').textContent = room.name;
+  document.getElementById('modalTitle').textContent = item.title;
+  document.getElementById('modalBody').textContent = item.body;
+  document.getElementById('modalCurator').textContent = 'Curated by ' + item.curator;
+  document.getElementById('modalSource').textContent = item.source ? 'Source: ' + item.source : '';
+  backdrop.classList.add('open');
+  playTone(isNew ? 'discover' : 'click');
+  render();
+}
+document.getElementById('closeModal').onclick = ()=>{ backdrop.classList.remove('open'); playTone('click'); };
+backdrop.onclick = (e)=>{ if(e.target===backdrop){ backdrop.classList.remove('open'); } };
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') backdrop.classList.remove('open'); });
+
+function launchConfetti(){
+  const colors = ['#E14C82','#E8B33D','#1AA6C9','#B9862F'];
+  for(let i=0;i<30;i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = (Math.random()*100) + 'vw';
+    piece.style.background = colors[i % colors.length];
+    piece.style.animationDuration = (2 + Math.random()*1.5) + 's';
+    piece.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(piece);
+    setTimeout(()=> piece.remove(), 3800);
+  }
+}
+
+let soundOn = false, audioCtx = null;
+const soundBtn = document.getElementById('soundBtn');
+soundBtn.onclick = ()=>{
+  soundOn = !soundOn;
+  soundBtn.textContent = soundOn ? '🔊' : '🔈';
+  if(soundOn && !audioCtx){ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }
+};
+function playTone(kind){
+  if(!soundOn || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  if(kind==='discover'){
+    osc.type='triangle'; osc.frequency.setValueAtTime(660, now); osc.frequency.exponentialRampToValueAtTime(990, now+0.12);
+    gain.gain.setValueAtTime(0.001, now); gain.gain.exponentialRampToValueAtTime(0.12, now+0.02); gain.gain.exponentialRampToValueAtTime(0.001, now+0.28);
+    osc.start(now); osc.stop(now+0.3);
+  } else {
+    osc.type='sine'; osc.frequency.setValueAtTime(420, now);
+    gain.gain.setValueAtTime(0.001, now); gain.gain.exponentialRampToValueAtTime(0.06, now+0.01); gain.gain.exponentialRampToValueAtTime(0.001, now+0.09);
+    osc.start(now); osc.stop(now+0.1);
+  }
+}
+
+/* ================= scroll progress + reveal + active nav ================= */
+window.addEventListener('scroll', ()=>{
+  const h = document.documentElement;
+  const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+const revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); } });
+}, { threshold:0.15 });
+revealEls.forEach(el=> io.observe(el));
+
+const navA = document.querySelectorAll('.nav-links a');
+const secEls = ['entrance','note','spotlight','halls','closing'].map(id=>document.getElementById(id));
+const navIO = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      navA.forEach(a=> a.classList.toggle('active', a.getAttribute('href') === '#'+en.target.id));
+    }
+  });
+}, { threshold:0.5 });
+secEls.forEach(el=> el && navIO.observe(el));
+
+render();
+</script>
+</body>
+</html>
